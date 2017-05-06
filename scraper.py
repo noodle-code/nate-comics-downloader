@@ -5,6 +5,7 @@ import os
 import requests
 import urllib.request
 
+url = ''
 chapters = []
 base_url = ''
 comic_dir = os.getcwd() + '\comic'
@@ -94,19 +95,37 @@ checkDirectory(comic_dir)
 url = input("Enter URL: ")
 getbaseurl(url)
 
-r = requests.get(url)
-data = r.text
-
 folder = input("Folder name for downloads: ")
 checkComicFolder(folder)
 
-soup = BeautifulSoup(data, 'html.parser')
+while url:
 
-getchapters(soup)
+    r = requests.get(url)
+    data = r.text
+
+    soup = BeautifulSoup(data, 'html.parser')
+
+    getchapters(soup)
+
+    nextPage = getNextPage(soup)
+
+    if nextPage:
+        url = base_url + nextPage
+    else:
+        url = nextPage
+
+# r = requests.get(url)
+# data = r.text
+#
+# soup = BeautifulSoup(data, 'html.parser')
+
+# nextPage = getNextPage(soup)
+
+# getchapters(soup)
 
 for chapter in reversed(chapters):
     getImage(base_url + chapter)
 
-# getNextPage(soup)
+#
 print('Scraping finished')
 # getGlobalChapters()
