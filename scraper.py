@@ -10,6 +10,8 @@ chapters = []
 base_url = ''
 comic_dir = os.getcwd() + '\comic'
 current_comic = ''
+nextPage = True
+
 
 def checkDirectory(directory):
     if not os.path.isdir(directory):
@@ -21,8 +23,8 @@ def checkDirectory(directory):
 def checkComicFolder(folder):
     global comic_dir
     global current_comic
-    current_comic = comic_dir + "\\" + folder
 
+    current_comic = comic_dir + "\\" + folder
     checkDirectory(current_comic)
 
     return
@@ -36,18 +38,11 @@ def getbaseurl(url):
 def getchapters(soup):
     global chapters
 
-    print('Scraping for available chapters...')
     chapter_list = soup.find('ul', { "class" : "tel_list" })
 
     for link in chapter_list.find_all('li', { "class" : "first"}):
         for ref in link.find_all('a'):
             chapters.append(ref.get('href'))
-    return
-
-def getGlobalChapters():
-    print('printing...')
-    for chapter in chapters:
-        print(chapter)
     return
 
 def getImage(url):
@@ -89,6 +84,7 @@ def getNextPage(soup):
         nextPage = forwardLink.get('href')
 
     return nextPage
+
 # Init
 checkDirectory(comic_dir)
 
@@ -98,10 +94,12 @@ getbaseurl(url)
 folder = input("Folder name for downloads: ")
 checkComicFolder(folder)
 
-while url:
+print("Scraping for available chapters...")
 
-    r = requests.get(url)
-    data = r.text
+while nextPage:
+
+    return_data = requests.get(url)
+    data = return_data.text
 
     soup = BeautifulSoup(data, 'html.parser')
 
@@ -111,21 +109,10 @@ while url:
 
     if nextPage:
         url = base_url + nextPage
-    else:
-        url = nextPage
 
-# r = requests.get(url)
-# data = r.text
-#
-# soup = BeautifulSoup(data, 'html.parser')
-
-# nextPage = getNextPage(soup)
-
-# getchapters(soup)
+print("Starting download of chapter images...")
 
 for chapter in reversed(chapters):
     getImage(base_url + chapter)
 
-#
 print('Scraping finished')
-# getGlobalChapters()
