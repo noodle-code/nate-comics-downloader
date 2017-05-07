@@ -1,2 +1,4 @@
 # nate-scraper
-Nate comic crawler
+Nate comic crawler (discontinued)
+
+For coding practices only
